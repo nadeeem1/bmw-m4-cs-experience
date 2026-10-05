@@ -1,0 +1,673 @@
+/*
+  Section styles. The step-1 token specimen has been removed, along with the
+  .model block that went out with ModelSection.jsx.
+
+  Hero layout note: text and media sit side by side rather than overlapping.
+  Text over a photograph would need a gradient scrim to stay legible, and
+  gradients are banned — the system separates surfaces with a hard edge and
+  relies on the surface stack for depth.
+*/
+
+/*
+  Hero — one editorial campaign composition.
+
+  200vh section in normal document flow, split into two equal distances:
+
+    0 .. 100vh    pinned. Type field and media plate both stick to the top of
+                  the viewport, so the composition stays whole while the orbit
+                  plays. One screen is the whole budget: any longer and the
+                  page stops answering the wheel.
+    100 .. 200vh  release. Both columns let go on the same line (they are the
+                  same height in the same cell), slide up together and the
+                  Gallery rises underneath at document speed.
+
+  The pin carries the motion itself, so nothing is ever standing still while
+  the user scrolls: the plate pushes in from the ground up, each pose settles
+  into place and pushes away as it dissolves, and the type field lags a
+  screen's worth of scroll behind the wheel. Native scrolling only — no lock,
+  no interception.
+
+  <64rem: the plate owns the full viewport from scroll 0 and the type
+  overlays the frames' pale sky band in walnut ink. Every frame keeps the
+  car in its lower half and open sky above, so type never touches the car —
+  no scrim, no gradient (both banned by the system). A walnut masthead
+  strip keeps the fixed nav's wordmark legible at rest; the nav itself is
+  untouched and scrolls nothing.
+
+  >=64rem: asymmetric split — walnut type field (36vw) left, full-bleed
+  photo plate right. Type stays entirely on the walnut field, so again no
+  scrim is needed.
+*/
+.hero {
+  position: relative;
+  min-height: calc(var(--vh) * 2);
+  background: var(--color-walnut);
+  display: block;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: var(--nav-h);
+  background: var(--color-walnut);
+  z-index: 1;
+}
+
+/* Overlay copy: walnut ink on the light sky, never over the car. */
+.hero__text {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+  padding: calc(var(--nav-h) + var(--space-18)) var(--gutter) var(--space-18);
+}
+
+.hero__meta {
+  font-size: var(--fs-micro);
+  font-weight: 500;
+  line-height: var(--lh-micro);
+  text-transform: uppercase;
+  color: var(--color-walnut);
+}
+
+.hero__headline {
+  font-size: clamp(3.5rem, 8vw, 6rem);
+  line-height: var(--lh-display);
+  color: var(--color-walnut);
+}
+
+.hero__line {
+  display: block;
+  overflow: hidden;
+  padding-block: 0.06em;
+  margin-block: -0.06em;
+}
+
+.hero__line > span {
+  display: block;
+  will-change: transform;
+}
+
+.hero__stripes {
+  max-width: 34rem;
+}
+
+/*
+  Slimmer bars on narrow screens: the whole type stack must clear the car's
+  roof line (~44vh) inside the first viewport. The system bars keep their
+  colour order and full width; only their height tightens here. Compound
+  selectors — the hero class sits on the same element as .mstrip--horizontal.
+*/
+.mstrip--horizontal.hero__stripes {
+  gap: 4px;
+}
+
+.mstrip--horizontal.hero__stripes .mstrip__bar {
+  height: 8px;
+}
+
+.hero__body {
+  max-width: 46ch;
+  color: var(--color-bark);
+}
+
+.hero__cue {
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+  font-size: var(--fs-micro);
+  font-weight: 500;
+  text-transform: uppercase;
+  color: var(--color-walnut);
+}
+
+.hero__cue::before {
+  content: '';
+  width: 2px;
+  height: 36px;
+  flex: none;
+  background: var(--color-walnut);
+  transform-origin: top center;
+  animation: hero-cue 1.8s var(--ease-expo-out) infinite;
+}
+
+@keyframes hero-cue {
+  0%,
+  100% {
+    transform: scaleY(0.35);
+    opacity: 0.4;
+  }
+
+  45% {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+}
+
+/*
+  Media plate — full-bleed, sharp-edged, never a rounded mask. One
+  viewport-tall plate pinned to the top of its area, which spans the whole
+  section — so the pin releases exactly where the hero's scroll progress
+  ends, on the same line as the pinned type field. It clips the orbit's
+  subtle push-in. Its in-flow position is first on narrow screens (type
+  overlays it), second column from 64rem.
+*/
+.hero__media {
+  position: sticky;
+  top: 0;
+  align-self: start;
+  height: var(--vh);
+  overflow: hidden;
+}
+
+/*
+  Photo orbit. Absolute layers only: at most two are mounted at a time, and
+  every layer uses transform/opacity so nothing triggers layout. Bottom
+  anchored cover: the car and road stay in frame at every viewport, and all
+  five frames are cropped to the same grounded composition — one hero, not
+  five pictures. The walnut ground shows through any letterboxing.
+*/
+.orbit {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: var(--color-walnut);
+  contain: layout paint;
+  /* Pushes in from the ground: the wheels stay planted, the sky gives way. */
+  transform-origin: 50% 100%;
+}
+
+.orbit__fallback {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: clamp(2rem, 8%, 6rem);
+}
+
+.orbit__fallback .sil {
+  width: 100%;
+  max-width: 34rem;
+  height: auto;
+}
+
+.orbit__layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 100%;
+  /* Settles and pushes away from the ground, like the plate itself. */
+  transform-origin: 50% 100%;
+  will-change: transform, opacity;
+  user-select: none;
+}
+
+/* The one landscape frame: bias the narrow-screen crop toward its rear. */
+.orbit__layer[src$='m4-cs-5.jpg'] {
+  object-position: 26% 50%;
+}
+
+/* --- Desktop campaign split: type field left, dominant plate right --- */
+
+@media (min-width: 64rem) {
+  .hero {
+    display: grid;
+    grid-template-columns: minmax(0, 36vw) minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr);
+  }
+
+  /* Wordmark sits on the walnut field; no masthead strip needed. */
+  .hero::before {
+    display: none;
+  }
+
+  /*
+    The type field is pinned with the plate. Without this the copy scrolls
+    away in the first viewport and the walnut column sits empty for the two
+    viewports that follow — half a screen of nothing while the orbit plays.
+    inset is reset first: the narrow-screen rule leaves left/right insets
+    that a sticky box would otherwise obey.
+  */
+  .hero__text {
+    position: sticky;
+    inset: auto;
+    top: 0;
+    align-self: start;
+    min-height: var(--vh);
+    gap: var(--element-gap);
+    padding: calc(var(--nav-h) + var(--space-68)) var(--gutter) var(--space-68);
+  }
+
+  .hero__meta {
+    color: var(--color-muted);
+  }
+
+  /* System stripe proportions return on the type field. */
+  .mstrip--horizontal.hero__stripes {
+    gap: var(--space-8);
+  }
+
+  .mstrip--horizontal.hero__stripes .mstrip__bar {
+    height: 14px;
+  }
+
+  .hero__headline {
+    font-size: clamp(4rem, 7vw, 8rem);
+    color: var(--color-cream);
+  }
+
+  .hero__body {
+    color: var(--color-muted);
+  }
+
+  /* The cue slot is the flex item now — it, not the cue, takes the auto
+     margin that pins the prompt to the foot of the type field. */
+  .hero__cue-slot {
+    margin-top: auto;
+  }
+
+  .hero__cue {
+    color: var(--color-muted);
+  }
+
+  .hero__cue::before {
+    background: var(--color-cork);
+  }
+
+  .hero__media {
+    border-left: 1px dashed var(--color-cork);
+  }
+}
+
+/*
+  Reduced motion: no pinned plate, no push-in, no three-viewport scrub. The
+  hero collapses to one viewport, the plate returns to normal flow, and
+  OrbitStack renders the first pose only. Declared last so it wins on wide
+  screens as well.
+*/
+@media (prefers-reduced-motion: reduce) {
+  .hero__cue::before {
+    animation: none;
+  }
+
+  .hero {
+    min-height: var(--vh);
+  }
+
+  .hero__text {
+    min-height: 0;
+  }
+
+  .hero__media {
+    position: relative;
+    top: auto;
+    height: var(--vh);
+  }
+}
+
+/*
+  Declared after both blocks so it wins on wide screens: with the plate back
+  in normal flow there is nothing left to pin against, and a sticky column
+  would hold for the few pixels between its content height and the cell.
+  Narrow screens keep the overlay (absolute) — that is what collapses the
+  hero to a single viewport there.
+*/
+@media (min-width: 64rem) and (prefers-reduced-motion: reduce) {
+  .hero__text {
+    position: static;
+    top: auto;
+  }
+}
+
+/* --- Gallery: three independent 100vh statements --- */
+
+.gallery {
+  scroll-margin-top: var(--nav-h);
+}
+
+.gallery__view {
+  min-height: var(--vh);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  background: var(--color-walnut);
+  border-top: 1px dashed var(--color-cork);
+}
+
+.gallery__text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--space-18);
+  padding: var(--space-45) var(--gutter);
+}
+
+.gallery__index {
+  font-size: var(--fs-micro);
+  font-weight: 500;
+  line-height: var(--lh-micro);
+  color: var(--color-driftwood);
+}
+
+/*
+  The dashed rule carries structure — index above it, statement below. It is
+  the system's only in-column divider and appears once per view.
+*/
+.gallery__label {
+  border-top: 1px dashed var(--color-cork);
+  padding-top: var(--space-18);
+  font-size: var(--fs-heading);
+  line-height: var(--lh-display);
+}
+
+.gallery__body {
+  max-width: 42ch;
+  color: var(--color-muted);
+}
+
+.gallery__media {
+  position: relative;
+  min-height: calc(var(--vh) * 0.56);
+}
+
+.gallery__media > * {
+  height: 100%;
+}
+
+@media (min-width: 48rem) {
+  .gallery__view {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
+  }
+
+  .gallery__view .gallery__text {
+    grid-column: 1;
+    grid-row: 1;
+    padding-block: var(--space-68);
+  }
+
+  .gallery__view .gallery__media {
+    grid-column: 2;
+    grid-row: 1;
+    min-height: 0;
+    border-left: 1px dashed var(--color-cork);
+  }
+
+  /* Mirrored view: media leads, text follows on the right. */
+  .gallery__view--right {
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  }
+
+  .gallery__view--right .gallery__media {
+    grid-column: 1;
+    border-left: 0;
+    border-right: 1px dashed var(--color-cork);
+  }
+
+  .gallery__view--right .gallery__text {
+    grid-column: 2;
+  }
+}
+
+/* --- Void-mode specification sections (Torque, Acceleration) --- */
+
+/*
+  Shares the Gallery's horizontal logic: walnut canvas, dashed hairline
+  between statements, min-height against --vh. No max-width container and
+  no card chrome.
+*/
+.void-section {
+  min-height: var(--vh);
+  display: flex;
+  align-items: center;
+  padding: var(--space-45) var(--gutter);
+  background: var(--color-walnut);
+  border-top: 1px dashed var(--color-cork);
+  scroll-margin-top: var(--nav-h);
+}
+
+.void-section > .void {
+  width: 100%;
+}
+
+@media (min-width: 48rem) {
+  .void-section {
+    padding-block: var(--space-68);
+  }
+}
+
+/*
+  Three columns sharing one grid. Object column is the widest at 1.35fr —
+  roughly the 30/40/30 split the ORYZO reference calls for. Gutter is the
+  18px element gap.
+*/
+.void {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-45);
+  align-items: center;
+}
+
+.void__col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-18);
+  min-width: 0;
+}
+
+.void__eyebrow {
+  font-size: var(--fs-micro);
+  font-weight: 500;
+  line-height: var(--lh-micro);
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.void__heading {
+  font-size: var(--fs-heading);
+  line-height: var(--lh-display);
+}
+
+.void__body {
+  max-width: 38ch;
+  color: var(--color-muted);
+}
+
+/* Same dashed-hairline idiom as the Gallery index rule. */
+.void__note {
+  border-top: 1px dashed var(--color-cork);
+  padding-top: var(--space-18);
+  max-width: 38ch;
+  font-size: var(--fs-micro);
+  line-height: var(--lh-micro);
+  color: var(--color-muted);
+}
+
+/* Sharp-edged plate — never a rounded mask. */
+.void__media {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+}
+
+.void__media > * {
+  height: 100%;
+}
+
+.void__media--plate {
+  aspect-ratio: 16 / 9;
+}
+
+@media (min-width: 48rem) {
+  .void {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr) minmax(0, 1fr);
+    gap: var(--element-gap);
+  }
+
+  .void__col--lead {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .void__col--object {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .void__col--support {
+    grid-column: 3;
+    grid-row: 1;
+  }
+
+  /* Mirrored arrangement; narrow screens keep DOM order and are unaffected. */
+  .void--reverse .void__col--lead {
+    grid-column: 3;
+  }
+
+  .void--reverse .void__col--support {
+    grid-column: 1;
+  }
+}
+
+/* --- Counter --- */
+
+.counter {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+}
+
+.counter__value {
+  display: flex;
+  align-items: baseline;
+  gap: 0.16em;
+  font-size: var(--fs-display);
+  font-weight: 500;
+  line-height: var(--lh-display);
+  font-variant-numeric: tabular-nums;
+}
+
+/*
+  Fixed decimals plus tabular figures plus a floor on the advance width means
+  every digit occupies the same space, so the count cannot shift the layout.
+*/
+.counter__digits {
+  display: inline-block;
+  min-width: 3ch;
+  font-variant-numeric: tabular-nums;
+}
+
+/*
+  At 0.6em of the display size this lands at roughly 25-43px, which clears the
+  24px WCAG large-text threshold. That is what makes #e7222e (4.39:1 on
+  walnut) legitimate here rather than a text-contrast failure.
+*/
+.counter__unit {
+  font-size: 0.6em;
+  color: var(--color-m-red);
+}
+
+.counter__label {
+  font-size: var(--fs-micro);
+  font-weight: 500;
+  line-height: var(--lh-micro);
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+/* --- Closing statement (CallToAction) --- */
+
+/*
+  Same canvas, same dashed hairline, same type scale as the void sections —
+  this is the last statement in the run, not a new surface.
+*/
+.cta-section {
+  min-height: calc(var(--vh) * 0.6);
+  display: flex;
+  align-items: center;
+  padding: var(--space-68) var(--gutter);
+  background: var(--color-walnut);
+  border-top: 1px dashed var(--color-cork);
+  scroll-margin-top: var(--nav-h);
+}
+
+.cta__inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-18);
+  width: 100%;
+}
+
+.cta__heading {
+  font-size: var(--fs-heading);
+  line-height: var(--lh-display);
+}
+
+.cta__caption {
+  max-width: 52ch;
+  font-size: var(--fs-micro);
+  line-height: var(--lh-micro);
+  color: var(--color-muted);
+}
+
+.cta__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-18);
+  margin-top: var(--space-12);
+}
+
+/*
+  The controls are deliberately inert. Dimming them is how the page says so
+  before the caption does; WCAG contrast does not apply to disabled controls.
+*/
+.btn:disabled {
+  opacity: 0.6;
+}
+
+/* --- Page terminus --- */
+
+.site-footer {
+  padding: var(--space-45) var(--gutter);
+  background: var(--color-bark);
+  border-top: 1px dashed var(--color-cork);
+}
+
+.site-footer__inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-18);
+}
+
+.site-footer__brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.site-footer__wordmark {
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--color-cream);
+  white-space: nowrap;
+}
+
+.site-footer__colophon {
+  max-width: 60ch;
+  font-size: var(--fs-micro);
+  line-height: var(--lh-micro);
+  color: var(--color-muted);
+}
+
+@media (min-width: 48rem) {
+  .site-footer__inner {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-45);
+  }
+}

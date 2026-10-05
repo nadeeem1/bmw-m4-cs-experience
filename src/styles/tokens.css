@@ -1,0 +1,119 @@
+/*
+  Design tokens for the M4 CS study.
+  Source of truth: ../monstar/DESIGN.md (the ORYZO reference doc).
+  Deliberate divergences from that doc, all per the project brief:
+    - Ember orange #dc5000 is dropped entirely; M accents replace it.
+    - Halyard Display Variable is substituted with Inter.
+    - The 8px legal size is dropped; 14px is the readable floor.
+    - The doc's `#40372` is a 5-digit hex typo (it resolves to purple).
+      Correct cork border is #40372e.
+    - Depth comes from the surface stack only: no shadows, no gradients.
+*/
+
+:root {
+  /* Surfaces — the two-step stack is the only elevation in the system */
+  --color-walnut: #100904; /* level 0, full-bleed canvas */
+  --color-bark: #382416; /* level 1, the one elevated solid */
+  --color-cork: #40372e; /* hairlines and dashed dividers */
+  --color-cream: #ffedd7; /* all foreground text, never #fff */
+
+  /*
+    Driftwood is structural only: 3.19:1 on walnut. It fails AA for body
+    text, so muted copy uses --color-muted (8.55:1) instead.
+  */
+  --color-driftwood: #6c5f51;
+  --color-muted: #b9a894;
+
+  /* M accents — the site's entire chromatic range */
+  --color-m-light: #81c4ff;
+  --color-m-dark: #16588e;
+  --color-m-red: #e7222e;
+
+  /*
+    Press red. Measured contrast, cream #ffedd7 foreground:
+      #e7222e fill -> 3.93:1   FAILS AA (needs 4.5:1)
+      #ce1a26 fill -> 4.83:1   passes AA
+    And #e7222e as text on walnut -> 4.39:1, which clears the 3:1 large-text
+    bar but not 4.5:1. So: keep --color-m-red for decorative bars and large
+    glyphs, and use --color-m-red-press wherever small text sits on the fill.
+  */
+  --color-m-red-press: #ce1a26;
+
+  /* Translucent surfaces — used sparingly, for the nav only.
+     Opacity is load-bearing for contrast: muted nav links are 12px, so the
+     bar must stay dark even when bright photo content scrolls beneath it.
+     At 0.82 the sky backdrop pulled the effective background up to
+     rgb(81 70 61) and dropped link contrast to 3.96:1 (AA needs 4.5:1).
+     At 0.92 the same backdrop yields 5.22:1. */
+  --color-bark-92: rgb(56 36 22 / 0.92);
+  --color-cork-40: rgb(64 55 46 / 0.4);
+
+  /* One typeface. ORYZO treats the family as the whole type system. */
+  --font-display: 'Inter Variable', 'Inter', ui-sans-serif, system-ui,
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-body: var(--font-display);
+
+  /* Type scale — ORYZO sizes, made fluid. Line heights are load-bearing. */
+  --fs-micro: 0.875rem; /* 14px, the readable floor */
+  --fs-sub: clamp(1.125rem, 0.35vw + 1.03rem, 1.5rem); /* 18 → 24px */
+  --fs-heading-sm: clamp(1.5rem, 0.5vw + 1.3rem, 1.875rem); /* 24 → 30px */
+  --fs-body: clamp(1.125rem, 0.8vw + 0.85rem, 1.8125rem); /* 18 → 29px */
+  --fs-heading: clamp(2.5625rem, 2.6vw + 1.2rem, 3.5rem); /* 41 → 56px */
+  --fs-display: clamp(2.5625rem, 4vw + 1.4rem, 4.5rem); /* 41 → 72px */
+
+  --lh-display: 0.9; /* sculptural block — the ORYZO signature */
+  --lh-heading-sm: 1.09;
+  --lh-sub: 1;
+  --lh-body: 1.26;
+  --lh-micro: 1.2;
+
+  /* ORYZO keeps letter-spacing normal at every size, including display. */
+
+  /* Spacing ladder */
+  --space-6: 6px;
+  --space-8: 8px;
+  --space-9: 9px;
+  --space-10: 10px;
+  --space-12: 12px;
+  --space-14: 14px;
+  --space-18: 18px;
+  --space-24: 24px;
+  --space-31: 31px;
+  --space-41: 41px;
+  --space-45: 45px;
+  --space-68: 68px;
+
+  --element-gap: 18px; /* the void-layout gutter */
+  --card-padding: 24px;
+
+  /* Radius vocabulary — these four values are the whole system */
+  --radius-cards: 12px;
+  --radius-inputs: 0px;
+  --radius-pill: 36px;
+  --radius-outlined: 22.5px;
+  --radius-full: 9999px;
+
+  /* Layout */
+  --gutter: clamp(1.125rem, 4vw, 4rem);
+  --nav-h: 60px;
+  --z-nav: 100;
+
+  /*
+    Section height indirection. Sections size against --vh rather than 100vh
+    so the 9:16 capture stage in recording mode can shrink them. Set in
+    Phase B; declared now so no stylesheet hardcodes vh later.
+  */
+  --vh: 100vh;
+
+  /* Motion */
+  --ease-expo-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-power3: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-fade: 0.6s;
+  --dur-reveal: 0.75s;
+}
+
+@media (min-width: 48rem) {
+  :root {
+    --nav-h: 72px;
+  }
+}

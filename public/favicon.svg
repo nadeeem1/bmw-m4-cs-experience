@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="">
+  <title>Zero Mercy</title>
+  <rect width="32" height="32" fill="#100904" />
+  <g transform="translate(16 16) skewX(-12) translate(-16 -16)">
+    <rect x="7.5" y="5" width="5" height="22" fill="#81c4ff" />
+    <rect x="13.5" y="5" width="5" height="22" fill="#16588e" />
+    <rect x="19.5" y="5" width="5" height="22" fill="#e7222e" />
+  </g>
+</svg>

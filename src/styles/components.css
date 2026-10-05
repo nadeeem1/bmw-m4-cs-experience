@@ -1,0 +1,264 @@
+/*
+  Components. Uppercase weight 500 throughout; no shadows anywhere; the
+  only fills in the system are bark and the accessible press red.
+*/
+
+/* --- Fixed top navigation --- */
+
+.nav {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: var(--z-nav);
+  height: var(--nav-h);
+  padding-inline: var(--gutter);
+  display: flex;
+  align-items: center;
+  background: transparent;
+  border-bottom: 1px dashed transparent;
+  transition:
+    background-color var(--dur-fade) var(--ease-expo-out),
+    border-color var(--dur-fade) var(--ease-expo-out);
+}
+
+/* Transparent over the hero, blurred solid once scrolled past 24px. */
+.nav--scrolled {
+  background: var(--color-bark-92);
+  backdrop-filter: blur(12px);
+  border-bottom-color: var(--color-cork);
+}
+
+.nav__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--element-gap);
+  width: 100%;
+}
+
+.nav__brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.nav__wordmark {
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--color-cream);
+  white-space: nowrap;
+}
+
+/*
+  The nav list is presentational. Without these two the user-agent's disc
+  markers and 40px list indent render a stray bullet in front of every link.
+*/
+.nav__links {
+  display: none;
+  list-style: none;
+  padding: 0;
+}
+
+/* Pins links and the CTA pill together on the right, wordmark on the left. */
+@media (min-width: 48rem) {
+  .nav__links {
+    margin-left: auto;
+  }
+}
+
+.nav__cta {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding-inline: var(--space-24);
+  border-radius: var(--radius-pill);
+  background: var(--color-m-red-press);
+  color: var(--color-cream);
+  font-size: var(--fs-micro);
+  font-weight: 500;
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition: background-color 0.25s var(--ease-expo-out);
+}
+
+.nav__cta:hover {
+  background: var(--color-m-red);
+}
+
+@media (min-width: 48rem) {
+  .nav__links {
+    display: flex;
+    align-items: center;
+    gap: clamp(var(--space-18), 2.5vw, var(--space-45));
+  }
+
+  .nav__link {
+    position: relative;
+    padding-bottom: var(--space-6);
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    color: var(--color-muted);
+    transition: color 0.25s var(--ease-expo-out);
+  }
+
+  /* Dashed underline indicator — never a solid rule. */
+  .nav__link::after {
+    content: '';
+    position: absolute;
+    inset: auto 0 0;
+    height: 0;
+    border-top: 1px dashed var(--color-cream);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 0.3s var(--ease-expo-out);
+  }
+
+  .nav__link:hover {
+    color: var(--color-cream);
+  }
+
+  .nav__link:hover::after {
+    transform: scaleX(1);
+  }
+}
+
+/*
+  At >=64rem the hero drops its walnut masthead strip, so the links sit
+  directly over the first frame's bright sky at rest — measured at 1.0-1.4:1
+  in --color-muted, which fails outright. The design system already answers
+  this exact situation with walnut ink over that same sky (hero copy on
+  narrow screens), so the links take it here too. Scoped to the unscrolled
+  state only: the moment the nav gains its bark backdrop, --color-muted
+  returns at 8.55:1. Nothing else about the header changes.
+*/
+@media (min-width: 64rem) {
+  .nav:not(.nav--scrolled) .nav__link {
+    color: var(--color-walnut);
+  }
+
+  .nav:not(.nav--scrolled) .nav__link::after {
+    border-top-color: var(--color-walnut);
+  }
+}
+
+/* --- M stripes --- */
+
+.mstrip {
+  display: flex;
+}
+
+.mstrip--horizontal {
+  flex-direction: column;
+  gap: var(--space-8);
+  width: 100%;
+}
+
+.mstrip--horizontal .mstrip__bar {
+  width: 100%;
+  height: 14px;
+  transform-origin: left center;
+}
+
+.mstrip--vertical {
+  flex-direction: row;
+  align-items: center;
+  gap: 3px;
+}
+
+.mstrip--vertical .mstrip__bar {
+  width: 4px;
+  height: 20px;
+  transform: skewX(-12deg);
+  transform-origin: center;
+}
+
+/* --- Buttons --- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-size: var(--fs-micro);
+  font-weight: 500;
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* Border does the work; no fill needed. */
+.btn--outlined {
+  padding-block: 7.5px;
+  padding-inline: var(--space-24);
+  border: 1px solid var(--color-cream);
+  border-radius: var(--radius-outlined);
+  background: transparent;
+  color: var(--color-cream);
+}
+
+/* The one filled action surface. Press red keeps cream text at 4.83:1. */
+.btn--filled {
+  padding-block: var(--space-14);
+  padding-inline: var(--space-24);
+  border-radius: var(--radius-pill);
+  background: var(--color-m-red-press);
+  color: var(--color-cream);
+}
+
+.btn--filled:hover {
+  background: var(--color-m-red);
+}
+
+/* --- Car image with bark placeholder fallback --- */
+
+.carimg {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--color-bark);
+}
+
+.carimg__fallback {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: clamp(2rem, 8%, 6rem);
+}
+
+.sil {
+  width: 100%;
+  height: auto;
+}
+
+.carimg__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform-origin: center center;
+}
+
+.carimg__img--drift {
+  animation: carimg-drift 14s linear forwards;
+}
+
+@keyframes carimg-drift {
+  from {
+    transform: scale(1.06);
+  }
+
+  to {
+    transform: scale(1.14);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .carimg__img--drift {
+    animation: none;
+  }
+}
